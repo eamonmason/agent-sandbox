@@ -1,0 +1,26 @@
+name: Agent Executor
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  call-executor:
+    if: >-
+      !github.event.issue.pull_request
+      && github.event.comment.author_association == 'OWNER'
+      && contains(github.event.comment.body, '@agent')
+      && contains(github.event.comment.body, 'execute')
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    uses: eamonmason/ai-workflows/.github/workflows/reusable-executor.yml@82298c591f38b52302daec490a67248bd45c9548
+    with:
+      issue_number: ${{ format('{0}', github.event.issue.number) }}
+      issue_title: ${{ github.event.issue.title }}
+      verify_command: ./scripts/verify.sh
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}

@@ -1,0 +1,28 @@
+name: Agent Reviewer
+
+on:
+  pull_request_review_comment:
+    types: [created]
+  issue_comment:
+    types: [created]
+
+jobs:
+  call-reviewer:
+    if: >-
+      contains(github.event.comment.body, '@agent')
+      && github.event.comment.author_association == 'OWNER'
+      && (github.event.pull_request != null || github.event.issue.pull_request != null)
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    uses: eamonmason/ai-workflows/.github/workflows/reusable-reviewer.yml@82298c591f38b52302daec490a67248bd45c9548
+    with:
+      pull_request_number: ${{ format('{0}', github.event.pull_request.number || github.event.issue.number) }}
+      pull_request_title: ${{ github.event.pull_request.title || github.event.issue.title }}
+      comment_body: ${{ github.event.comment.body }}
+      head_ref: ${{ github.event.pull_request.head.ref || '' }}
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}

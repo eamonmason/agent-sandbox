@@ -1,0 +1,30 @@
+name: Agent Planner
+
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  call-planner:
+    if: >-
+      !github.event.issue.pull_request
+      && github.actor != 'github-actions[bot]'
+      && !contains(github.event.issue.labels.*.name, 'renovate')
+      && (
+           (github.event_name == 'issues'
+            && github.event.issue.author_association == 'OWNER')
+           || (github.event_name == 'issue_comment'
+               && github.event.comment.author_association == 'OWNER'
+               && !contains(github.event.comment.body, '@agent execute'))
+         )
+    permissions:
+      issues: write
+      contents: read
+    uses: eamonmason/ai-workflows/.github/workflows/reusable-planner.yml@82298c591f38b52302daec490a67248bd45c9548
+    with:
+      issue_number: ${{ format('{0}', github.event.issue.number) }}
+      issue_title: ${{ github.event.issue.title }}
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
