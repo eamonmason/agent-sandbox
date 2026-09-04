@@ -8,7 +8,7 @@ jobs:
   call-executor:
     if: >-
       !github.event.issue.pull_request
-      && github.event.comment.author_association == 'OWNER'
+      && github.event.comment.author_association != 'OWNER'
       && contains(github.event.comment.body, '@agent')
       && contains(github.event.comment.body, 'execute')
     permissions:
