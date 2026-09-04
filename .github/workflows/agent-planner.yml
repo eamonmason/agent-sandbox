@@ -22,7 +22,7 @@ jobs:
     permissions:
       issues: write
       contents: read
-    uses: eamonmason/ai-workflows/.github/workflows/reusable-planner.yml@82298c591f38b52302daec490a67248bd45c9548
+    uses: eamonmason/ai-workflows/.github/workflows/reusable-planner.yml@d74f701d0f3ef995f9b5eb9e7b00ac4ba7a29ede
     with:
       issue_number: ${{ format('{0}', github.event.issue.number) }}
       issue_title: ${{ github.event.issue.title }}
