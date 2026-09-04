@@ -19,12 +19,18 @@ jobs:
                && github.event.comment.author_association == 'OWNER'
                && !contains(github.event.comment.body, '@agent execute'))
          )
+    # The planner now writes a spec branch and opens a PR, so it needs more
+    # than issues: write. Must be at least what reusable-planner.yml declares
+    # or the call fails validation before it runs.
     permissions:
+      contents: write
+      pull-requests: write
       issues: write
-      contents: read
     uses: eamonmason/ai-workflows/.github/workflows/reusable-planner.yml@d74f701d0f3ef995f9b5eb9e7b00ac4ba7a29ede
     with:
       issue_number: ${{ format('{0}', github.event.issue.number) }}
       issue_title: ${{ github.event.issue.title }}
     secrets:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      APP_ID: ${{ secrets.APP_ID }}
+      APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}
